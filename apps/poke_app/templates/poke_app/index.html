@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pokes</title>
+</head>
+<body>
+    <a href="{% url 'poke_app:logout' %}">Logout</a>
+        <h1>Welcome, {{request.session.user_name}}</h1>
+        {% if my_pokes > 0 %}
+            <p>{{my_pokes}} people poked you!</p>
+        {% endif %}
+    <br>
+    {% for each in pokers|dictsortreversed:'count' %}
+        <p>{{each.name}} poked you {{each.count}} times</p>
+    {% endfor %}
+    <br>
+    <h4>People you may want to poke:</h4>
+    <table>
+        <thead>
+            <th>Name</th>
+            <th>Alias</th>
+            <th>Email Adress</th>
+            <th>Poke History</th>
+            <th>Action</th>
+        </thead>
+        {% for each in others %}
+            <tr>
+                <td>{{each.name}}</td>
+                <td>{{each.alias}}</td>
+                <td>{{each.email}}</td>
+                <td>{{each.user_poked.count}} pokes</td>
+                <td>
+                    <form action="{% url 'poke_app:poke' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="poker_id" value="{{request.session.user_id}}">
+                        <input type="hidden" name="poked_id" value="{{each.id}}">
+                        <input type="submit" value="Poke!">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
